@@ -1,0 +1,16 @@
+{
+  "routes": [
+    {
+      "src": "/api/ea-sync",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/api/alerts",
+      "dest": "api/index.js"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "api/index.js"
+    }
+  ]
+}
