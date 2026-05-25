@@ -1,19 +1,26 @@
+// api/webhook.js
 export default async function handler(req, res) {
-    // Force allow POST requests
+    // Debugging: Log the method so you can see it in Vercel Logs
+    console.log("Received request method:", req.method);
+
     if (req.method !== 'POST') {
-        return res.status(200).json({ status: 'ignored' }); 
+        return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
     }
 
-    const { content } = req.body;
-    const { TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID } = process.env;
-
     try {
-        const response = await fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+        const { content } = req.body;
+        // Verify these are in your Vercel Environment Variables
+        const token = process.env.TELEGRAM_BOT_TOKEN;
+        const chat_id = process.env.TELEGRAM_CHAT_ID;
+
+        const response = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: content })
+            body: JSON.stringify({ chat_id: chat_id, text: content })
         });
-        return res.status(200).json({ status: 'ok' });
+        
+        const data = await response.json();
+        return res.status(200).json(data);
     } catch (error) {
         return res.status(500).json({ error: error.message });
     }
